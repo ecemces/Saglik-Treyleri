@@ -10,9 +10,9 @@ from datetime import datetime
 import sv_ttk
 today = date.today()
 login= tkinter.Tk()
-sv_ttk.set_theme("light") #lisans?
+sv_ttk.set_theme("light")
 
-login.geometry('460x145')  
+login.geometry('460x145+480+260')  
 login.title('Giriş yap')
 login.iconbitmap("technopc-logo-png-6858-d.ico")
 usernameLabel = ttk.Label(login, text="Kullanıcı adı")
@@ -60,13 +60,13 @@ def validateLogin(username, password):
             button4.grid(row=3,column=0,sticky=tk.NS,pady=16,padx=16)
             button5 = ttk.Button(login,text="5.çekmece ",command=lambda:connect5(username))
             button5.grid(row=4,column=0,sticky=tk.NS,pady=16,padx=16)
-            login.geometry('130x310')  #check
+            login.geometry('130x310+650+260')  #check
             login.title('Çekmeceler')
              #exede açılacak mı bak
             break
         else:
             login.geometry('460x180')
-            exceptionWrong.grid(row=5,column=1,rowspan=2)
+            exceptionWrong.grid(row=5,column=0,columnspan=4)
             usernameEntry.delete(0, tk.END)
             passwordEntry.delete(0, tk.END)
     def connect(username): #fonksyionlar düzenlenebilir
