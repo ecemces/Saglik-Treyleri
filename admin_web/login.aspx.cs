@@ -19,7 +19,7 @@ namespace saglik_treyleri.web1
         protected void Page_Load(object sender, EventArgs e)
         {
 
-        }
+        }  
         protected void loginbutton_Click(object sender, EventArgs e)
         {           
             connect.Open();
@@ -37,10 +37,17 @@ namespace saglik_treyleri.web1
             SqlCommand reader_command = new SqlCommand(reader_icin, connect);
             reader_command.Parameters.AddWithValue("@username", usernametxt.Text);
             SqlDataReader dr =reader_command.ExecuteReader();
+            bool verified = false;
             if (dr.HasRows)
             {
                 int yetki_int= (int)command2.ExecuteScalar();
-                bool verified = BCrypt.Net.BCrypt.Verify(passwordtxt.Text, result);
+                try { 
+                    verified = BCrypt.Net.BCrypt.Verify(passwordtxt.Text, result); 
+                }
+                catch (BCrypt.Net.SaltParseException ex)
+                {
+                    verified = false;
+                }
                 if ((verified == true) & (yetki_int == 1))
                 {
                     Response.Redirect("adminpage.aspx");
@@ -58,16 +65,18 @@ namespace saglik_treyleri.web1
                     InvalidLoginLabel.Text = "Kullanıcı adı veya şifre yanlış.";
                     InvalidLoginLabel.ForeColor = System.Drawing.Color.Red;
                 }
-            }          
+
+            }
+            
             else
             {
                 InvalidLoginLabel.Visible = true;
                 InvalidLoginLabel.Text = "Kullanıcı adı veya şifre yanlış.";
                 InvalidLoginLabel.ForeColor = System.Drawing.Color.Red;
             }
+
             dr.Close();
             connect.Close();
-
         }
     }
 }
