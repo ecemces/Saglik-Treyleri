@@ -8,6 +8,8 @@ using System.Data.SqlClient;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Web.Helpers;
+using static System.Net.Mime.MediaTypeNames;
+
 namespace saglik_treyleri.web1
 {
     public partial class WebForm3 : System.Web.UI.Page
@@ -20,14 +22,21 @@ namespace saglik_treyleri.web1
         }
 
         protected void submitbutton_Click(object sender, EventArgs e)
-        {            
+        {
+            
             connect.Open();
             string checkusername = "select * from [kullanicilar] where kullanici = @username ";
             SqlCommand command = new SqlCommand(checkusername, connect);
             command.Parameters.AddWithValue("@username", usernametxt.Text);
             SqlDataReader reader = command.ExecuteReader();
             //admin ekleme özelliği yok
-            if (!reader.HasRows && passwordtxt0.Text==passwordtxt.Text)
+            if (passwordtxt.Text=="" || usernametxt.Text == ""){
+                reader.Close();
+                InvalidLabel.Visible = true;
+                InvalidLabel.Text = "Kullanıcı adı ve şifre boş olamaz.";
+                InvalidLabel.ForeColor = System.Drawing.Color.Red;
+            }
+            else if (!reader.HasRows && passwordtxt0.Text==passwordtxt.Text)
             {   
                 reader.Close();
                 var hash = BCrypt.Net.BCrypt.HashPassword(passwordtxt.Text);
@@ -44,14 +53,16 @@ namespace saglik_treyleri.web1
 
                 //Response.Redirect("adminpage.aspx");
             }
-            else if (reader.HasRows)                
+            else if (reader.HasRows)
+                
             {
                 reader.Close();
                 InvalidLabel.Visible = true;
                 InvalidLabel.Text = "Bu kullanıcı adı kullanılmaktadır.";
                 InvalidLabel.ForeColor = System.Drawing.Color.Red;
             }
-            else if (!reader.HasRows && passwordtxt0.Text != passwordtxt.Text)              
+            else if (!reader.HasRows && passwordtxt0.Text != passwordtxt.Text)
+                
             {
                 reader.Close();
                 InvalidLabel.Visible = true;
@@ -59,11 +70,18 @@ namespace saglik_treyleri.web1
                 InvalidLabel.ForeColor = System.Drawing.Color.Red;
             }
 
+
         }
 
         protected void usernametxt_TextChanged(object sender, EventArgs e)
         {
 
         }
+
+        protected void logoutbutton_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("login.aspx");
+        }
     }
 }
+
