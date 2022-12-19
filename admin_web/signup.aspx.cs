@@ -13,23 +13,20 @@ using static System.Net.Mime.MediaTypeNames;
 namespace saglik_treyleri.web1
 {
     public partial class WebForm3 : System.Web.UI.Page
-    {
-       
+    {      
         SqlConnection connect = new SqlConnection("Data Source=localhost;Initial Catalog=SaglikTreyleri;Integrated Security=True");
         protected void Page_Load(object sender, EventArgs e)
         {
            
         }
-
         protected void submitbutton_Click(object sender, EventArgs e)
         {
-            
             connect.Open();
             string checkusername = "select * from [kullanicilar] where kullanici = @username ";
             SqlCommand command = new SqlCommand(checkusername, connect);
             command.Parameters.AddWithValue("@username", usernametxt.Text);
             SqlDataReader reader = command.ExecuteReader();
-            //admin ekleme özelliği yok
+
             if (passwordtxt.Text=="" || usernametxt.Text == ""){
                 reader.Close();
                 InvalidLabel.Visible = true;
@@ -44,7 +41,15 @@ namespace saglik_treyleri.web1
                 SqlCommand addCommand = new SqlCommand(createUser, connect);
                 addCommand.Parameters.AddWithValue("@kullanici", usernametxt.Text);
                 addCommand.Parameters.AddWithValue("@sifre", hash);
-                addCommand.Parameters.AddWithValue("@yetki", 0);
+                if (CheckBox3.Checked)
+                {
+                    addCommand.Parameters.AddWithValue("@yetki", 1);
+                }
+                else if (!CheckBox3.Checked)
+                {
+                    addCommand.Parameters.AddWithValue("@yetki", 0);
+                }
+               
                 addCommand.ExecuteNonQuery();
                 connect.Close();
                 InvalidLabel.Visible = true;
@@ -69,18 +74,19 @@ namespace saglik_treyleri.web1
                 InvalidLabel.Text = "Lütfen şifrenizi doğrulayın.";
                 InvalidLabel.ForeColor = System.Drawing.Color.Red;
             }
-
-
         }
 
         protected void usernametxt_TextChanged(object sender, EventArgs e)
         {
-
         }
 
         protected void logoutbutton_Click(object sender, EventArgs e)
         {
             Response.Redirect("login.aspx");
+        }
+
+        protected void CheckBox3_CheckedChanged(object sender, EventArgs e)
+        {
         }
     }
 }
