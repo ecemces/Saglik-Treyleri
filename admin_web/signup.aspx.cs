@@ -20,8 +20,7 @@ namespace saglik_treyleri.web1
         }
 
         protected void submitbutton_Click(object sender, EventArgs e)
-        {
-            
+        {            
             connect.Open();
             string checkusername = "select * from [kullanicilar] where kullanici = @username ";
             SqlCommand command = new SqlCommand(checkusername, connect);
@@ -31,7 +30,7 @@ namespace saglik_treyleri.web1
             if (!reader.HasRows && passwordtxt0.Text==passwordtxt.Text)
             {   
                 reader.Close();
-                var hash = Crypto.HashPassword(passwordtxt.Text);
+                var hash = BCrypt.Net.BCrypt.HashPassword(passwordtxt.Text);
                 string createUser = "insert into [kullanicilar]  (kullanici, sifre,yetki) values(@kullanici, @sifre,@yetki)";
                 SqlCommand addCommand = new SqlCommand(createUser, connect);
                 addCommand.Parameters.AddWithValue("@kullanici", usernametxt.Text);
@@ -45,19 +44,20 @@ namespace saglik_treyleri.web1
 
                 //Response.Redirect("adminpage.aspx");
             }
-            else if (reader.HasRows)
+            else if (reader.HasRows)                
             {
+                reader.Close();
                 InvalidLabel.Visible = true;
                 InvalidLabel.Text = "Bu kullanıcı adı kullanılmaktadır.";
                 InvalidLabel.ForeColor = System.Drawing.Color.Red;
             }
-            else if (!reader.HasRows && passwordtxt0.Text != passwordtxt.Text)
+            else if (!reader.HasRows && passwordtxt0.Text != passwordtxt.Text)              
             {
+                reader.Close();
                 InvalidLabel.Visible = true;
                 InvalidLabel.Text = "Lütfen şifrenizi doğrulayın.";
                 InvalidLabel.ForeColor = System.Drawing.Color.Red;
             }
-
 
         }
 
@@ -67,4 +67,3 @@ namespace saglik_treyleri.web1
         }
     }
 }
-
