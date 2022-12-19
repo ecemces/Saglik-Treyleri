@@ -8,10 +8,10 @@ import tkinter
 from datetime import date
 from datetime import datetime
 import sv_ttk
+import bcrypt
 today = date.today()
 login= tkinter.Tk()
 sv_ttk.set_theme("light")
-
 login.geometry('460x145+480+260')  
 login.title('Giriş yap')
 login.iconbitmap("technopc-logo-png-6858-d.ico")
@@ -32,18 +32,33 @@ passwordEntry.grid(row=1, column=1)
 server = 'localhost' 
 database = 'SaglikTreyleri'
 cnxn = pyodbc.connect('Driver={SQL Server};'
-                      'Server=192.168.0.80;'
+                      'Server=192.168.0.85;'
                       'Database=SaglikTreyleri;'
                       'Trusted_Connection=yes;')
 cursor = cnxn.cursor()
 exceptionWrong = ttk.Label(login,text="      Kullanıcı adı ya da şifre yanlış")
 
 def validateLogin(username, password):
-    cursor.execute("SELECT * FROM kullanicilar")
+    exceptionWrong.grid_remove()
+    kullanici_isimleri="SELECT kullanici FROM kullanicilar "
+    cursor.execute(kullanici_isimleri)
+    kullanici_isimleri_result = cursor.fetchall()
+   
+    for satirlar in kullanici_isimleri_result:
+        pass
+    if username not in satirlar[0]:
+            login.geometry('460x180')
+            exceptionWrong.grid(row=5,column=0,columnspan=4)
+            usernameEntry.delete(0, tk.END)
+            passwordEntry.delete(0, tk.END)
+    cursor.execute("SELECT sifre FROM kullanicilar where kullanici=?",(username))
     myresult = cursor.fetchall()
+    encoded=password.encode('utf-8')
     for rows in myresult:
-        exceptionWrong.grid_remove()
-        if (username==rows[0] and password==rows[1]):
+        result = bcrypt.checkpw(encoded, rows[0].encode('utf-8'))
+
+        if (result):
+            exceptionWrong.grid_remove()
             usernameLabel.grid_remove()
             usernameEntry.grid_remove()
             passwordLabel.grid_remove()
