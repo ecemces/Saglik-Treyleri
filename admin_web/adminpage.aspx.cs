@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,7 +14,10 @@ namespace saglik_treyleri.web1
         
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+            if (Session["User"] == null)
+            {
+                Response.Redirect("login.aspx");
+            }
         }
 
         protected void raporButton_Click(object sender, EventArgs e)
@@ -23,9 +26,10 @@ namespace saglik_treyleri.web1
             if (Session["User"] != null)
             {
                 myname = Session["User"].ToString();
+                
             }
-           
             Response.Redirect("rapor.aspx");
+
         }
         protected void kullanıcıEkle_Click(object sender, EventArgs e)
         {
@@ -33,9 +37,10 @@ namespace saglik_treyleri.web1
             if (Session["User"] != null)
             {
                 myname = Session["User"].ToString();
+                
             }
-
             Response.Redirect("signup.aspx");
+
         }
 
         protected void desciptionTxt_TextChanged(object sender, EventArgs e)
