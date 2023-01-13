@@ -19,9 +19,11 @@ namespace saglik_treyleri.web1
         protected void Page_Load(object sender, EventArgs e)
         {
 
-        }  
+        }
+  
         protected void loginbutton_Click(object sender, EventArgs e)
-        {           
+        {
+            
             connect.Open();
             //şifre çekildi
             string password = "select sifre from [kullanicilar] where kullanici = @username ";
@@ -50,11 +52,12 @@ namespace saglik_treyleri.web1
                 }
                 if ((verified == true) & (yetki_int == 1))
                 {
-                    Response.Redirect("adminpage.aspx");
                     Session["User"] = usernametxt.Text;
+                    Response.Redirect("adminpage.aspx");
+                    
                 }
                 else if ((verified == true) & (yetki_int != 1))
-                { // şu an adminin ismi erz imiş gibi düşeneceğiz ama veritabanında yetki columnu eklenecek (yetki_table==1)
+                { 
 
                     InvalidLoginLabel.Visible = true;
                     InvalidLoginLabel.Text = "Kullanıcının yetkisi yok.";
@@ -65,6 +68,7 @@ namespace saglik_treyleri.web1
                     InvalidLoginLabel.Text = "Kullanıcı adı veya şifre yanlış.";
                     InvalidLoginLabel.ForeColor = System.Drawing.Color.Red;
                 }
+
 
             }
             
@@ -77,6 +81,14 @@ namespace saglik_treyleri.web1
 
             dr.Close();
             connect.Close();
+
+ 
+
+
+
+
+
+
         }
     }
 }
